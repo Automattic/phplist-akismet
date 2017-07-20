@@ -31,6 +31,20 @@ class akismet extends phplistPlugin {
 		);
 	}
 
+	public function adminmenu() {
+		return array();
+	}
+
+	public function validateSubscriptionPage( $pageData ) {
+		if ( $this->enabled ) {
+			if ( ! empty( $_POST ) ) {
+				if ( $this->akismet_verify_key( getConfig( 'akismet_api_key' ), getConfig( 'website' ) ) ) {
+					return 'You cannot subscribe with this email address';
+				}
+			}
+		}
+	}
+
 	// From Akismet Documentation
 	function akismet_verify_key( $key, $blog ) {
 		$blog = urlencode($blog);
