@@ -1,6 +1,4 @@
 <?php
-// ini_set('error_log', __DIR__ . '/errors.log');
-// error_reporting( E_ALL );
 /**
  * Akismet Plugin for PHPList
  **/
@@ -74,7 +72,7 @@ class akismet extends phplistPlugin {
 						}
 					}
 
-					if ( akismet_comment_check( getConfig( 'akismet_api_key' ), $_data ) ) {
+					if ( $this->akismet_comment_check( getConfig( 'akismet_api_key' ), $_data ) ) {
 						return 'You cannot subscribe with this email address';
 					}
 				}
@@ -133,6 +131,7 @@ class akismet extends phplistPlugin {
 		$http_request .= "User-Agent: {$akismet_ua}\r\n";
 		$http_request .= "\r\n";
 		$http_request .= $request;
+
 		$response = '';
 		if( false != ( $fs = @fsockopen( 'ssl://' . $http_host, $port, $errno, $errstr, 10 ) ) ) {
 
