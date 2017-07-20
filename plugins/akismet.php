@@ -39,10 +39,49 @@ class akismet extends phplistPlugin {
 		if ( $this->enabled ) {
 			if ( ! empty( $_POST ) ) {
 				if ( $this->akismet_verify_key( getConfig( 'akismet_api_key' ), getConfig( 'website' ) ) ) {
-					return 'You cannot subscribe with this email address';
+
+					$_data = array(
+						'blog' => getConfig( 'website' ),
+						'user_ip' => isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '',
+						'user_agent' => isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '',
+						'referrer' => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '',
+						'permalink' => '',
+						'comment_type' => 'signup',
+						'comment_author' => '',
+						'comment_author_email' => isset( $_POST['email'] ) ? $_POST['email'] : '',
+						'comment_author_url' => '',
+						'comment_content' => '',
+					);
+
+					foreach ( $_POST as $_key => $_value ) {
+						if ( is_string( $_value ) ) {
+							$_data["POST_{$_key}"] = $_value;
+						}
+					}
+
+					foreach ( $_SERVER as $_key => $_value ) {
+						if ( ! is_string( $_value ) ) {
+							continue;
+						}
+
+						if ( preg_match( '/^HTTP_COOKIE/', $_key ) ) {
+							continue;
+						}
+
+						// Send any potentially useful $_SERVER vars, but avoid sending junk we don't need.
+						if ( preg_match( '/^(HTTP_|REMOTE_ADDR|REQUEST_URI|DOCUMENT_URI)/', $_key ) ) {
+								$_data[$_key] = $_value;
+						}
+					}
+
+					if ( akismet_comment_check( getConfig( 'akismet_api_key' ), $_data ) ) {
+						return 'You cannot subscribe with this email address';
+					}
 				}
 			}
 		}
+
+		return '';
 	}
 
 	// From Akismet Documentation
@@ -80,16 +119,8 @@ class akismet extends phplistPlugin {
 	}
 
 	function akismet_comment_check( $key, $data ) {
-		$request = 'blog='. urlencode($data['blog']) .
-			'&user_ip='. urlencode($data['user_ip']) .
-			'&user_agent='. urlencode($data['user_agent']) .
-			'&referrer='. urlencode($data['referrer']) .
-			'&permalink='. urlencode($data['permalink']) .
-			'&comment_type='. urlencode($data['comment_type']) .
-			'&comment_author='. urlencode($data['comment_author']) .
-			'&comment_author_email='. urlencode($data['comment_author_email']) .
-			'&comment_author_url='. urlencode($data['comment_author_url']) .
-			'&comment_content='. urlencode($data['comment_content']);
+		$request = http_build_query( $data );
+
 		$host = $http_host = $key.'.rest.akismet.com';
 		$path = '/1.1/comment-check';
 		$port = 443;
