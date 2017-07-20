@@ -16,6 +16,13 @@ class akismet extends phplistPlugin {
 			'allowempty' => true,
 			'category' => 'Akismet',
 		),
+		'akismet_spam_message' => array(
+			'value' => 'You cannot subscribe with this email address.',
+			'description' => 'Message to display when a subscription is blocked by Akismet',
+			'type' => 'text',
+			'allowempty' => false,
+			'category' => 'Akismet',
+		),
 	);
 
 	public function __construct() {
@@ -73,7 +80,7 @@ class akismet extends phplistPlugin {
 					}
 
 					if ( $this->akismet_comment_check( getConfig( 'akismet_api_key' ), $_data ) ) {
-						return 'You cannot subscribe with this email address';
+						return getConfig( 'akismet_spam_message' );
 					}
 				}
 			}
