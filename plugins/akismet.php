@@ -7,7 +7,7 @@ class akismet extends phplistPlugin {
 	public $enabled = true;
 	public $description = 'Check subscription requests for spam using the Akismet service.';
 	public $authors = 'Automattic';
-	public $version = '0.01';
+	public $version = '1.00';
 	public $settings = array(
 		'akismet_api_key' => array(
 			'value' => 'Enter your API Key here.',
