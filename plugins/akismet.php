@@ -23,6 +23,12 @@ class akismet extends phplistPlugin {
 			'allowempty' => false,
 			'category' => 'Akismet',
 		),
+		'akismet_enable_logging' => array(
+			'value' => false,
+			'description' => 'Track blocked subscriptions in the Event Log',
+			'allowempty' => false,
+			'category' => 'Akismet',
+		),
 	);
 
 	public function __construct() {
@@ -80,6 +86,10 @@ class akismet extends phplistPlugin {
 					}
 
 					if ( $this->akismet_comment_check( getConfig( 'akismet_api_key' ), $_data ) ) {
+						if ( true == getConfig( 'akismet_enable_logging' ) ) {
+							$_message = "Akismet blocked spam subscription from {$_data['comment_author_email']} via {$_data['user_ip']}.";
+							logEvent( $_message );
+						}
 						return getConfig( 'akismet_spam_message' );
 					}
 				}
