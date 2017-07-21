@@ -26,6 +26,7 @@ class akismet extends phplistPlugin {
 		'akismet_enable_logging' => array(
 			'value' => false,
 			'description' => 'Track blocked subscriptions in the Event Log',
+			'type' => 'boolean',
 			'allowempty' => false,
 			'category' => 'Akismet',
 		),
