@@ -5,7 +5,7 @@
 class akismet extends phplistPlugin {
 	public $name = 'Akismet Plugin';
 	public $enabled = true;
-	public $description = 'Check subscriber email addresses for spam using the Akismet service.';
+	public $description = 'Check subscription requests for spam using the Akismet service.';
 	public $authors = 'Automattic';
 	public $version = '0.01';
 	public $settings = array(
@@ -17,7 +17,7 @@ class akismet extends phplistPlugin {
 			'category' => 'Akismet',
 		),
 		'akismet_spam_message' => array(
-			'value' => 'You cannot subscribe with this email address.',
+			'value' => 'Your subscription request has been denied.',
 			'description' => 'Message to display when a subscription is blocked by Akismet',
 			'type' => 'text',
 			'allowempty' => false,
