@@ -52,6 +52,12 @@ class akismet extends phplistPlugin {
 			if ( ! empty( $_POST ) ) {
 				if ( $this->akismet_verify_key( getConfig( 'akismet_api_key' ), getConfig( 'website' ) ) ) {
 
+					// Fix up Remote IP When behind Sucuri Firewall
+					// https://kb.sucuri.net/firewall/Troubleshooting/same-user-ip
+					if( isset( $_SERVER['HTTP_X_SUCURI_CLIENTIP'] ) ) {
+						$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_SUCURI_CLIENTIP'];
+					}
+
 					$_data = array(
 						'blog' => getConfig( 'website' ),
 						'user_ip' => isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '',
